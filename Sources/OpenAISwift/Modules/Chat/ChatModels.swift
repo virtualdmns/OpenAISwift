@@ -1,0 +1,189 @@
+import Foundation
+
+/// Models for the Chat Completions API
+@available(iOS 14.0, macOS 11.0, *)
+public enum ChatModels {
+    /// Represents a message in a chat conversation
+    public struct Message: Codable, Equatable {
+        /// The role of the message sender
+        public let role: Role
+        
+        /// The content of the message
+        public let content: String
+        
+        /// The name of the sender (optional)
+        public let name: String?
+        
+        /// Creates a new chat message
+        /// - Parameters:
+        ///   - role: The role of the message sender
+        ///   - content: The content of the message
+        ///   - name: The name of the sender (optional)
+        public init(role: Role, content: String, name: String? = nil) {
+            self.role = role
+            self.content = content
+            self.name = name
+        }
+        
+        /// The role of the message sender
+        public enum Role: String, Codable {
+            case system
+            case user
+            case assistant
+            case function
+        }
+    }
+    
+    /// Request for the chat completions API
+    public struct CompletionRequest: Codable {
+        /// The model to use
+        public let model: String
+        
+        /// The messages to generate completions for
+        public let messages: [Message]
+        
+        /// The maximum number of tokens to generate
+        public let maxTokens: Int?
+        
+        /// The sampling temperature
+        public let temperature: Double?
+        
+        /// The nucleus sampling parameter
+        public let topP: Double?
+        
+        /// How many completions to generate
+        public let n: Int?
+        
+        /// Whether to stream the response
+        public let stream: Bool?
+        
+        /// The stop sequences
+        public let stop: [String]?
+        
+        /// The presence penalty
+        public let presencePenalty: Double?
+        
+        /// The frequency penalty
+        public let frequencyPenalty: Double?
+        
+        /// The logit bias
+        public let logitBias: [String: Int]?
+        
+        /// The user identifier
+        public let user: String?
+        
+        /// Creates a new chat completion request
+        /// - Parameters:
+        ///   - model: The model to use (e.g., "gpt-4")
+        ///   - messages: The messages to generate completions for
+        ///   - maxTokens: The maximum number of tokens to generate
+        ///   - temperature: The sampling temperature (0-2)
+        ///   - topP: The nucleus sampling parameter (0-1)
+        ///   - n: How many completions to generate
+        ///   - stream: Whether to stream the response
+        ///   - stop: The stop sequences
+        ///   - presencePenalty: The presence penalty (-2 to 2)
+        ///   - frequencyPenalty: The frequency penalty (-2 to 2)
+        ///   - logitBias: The logit bias
+        ///   - user: The user identifier
+        public init(
+            model: String,
+            messages: [Message],
+            maxTokens: Int? = nil,
+            temperature: Double? = nil,
+            topP: Double? = nil,
+            n: Int? = nil,
+            stream: Bool? = nil,
+            stop: [String]? = nil,
+            presencePenalty: Double? = nil,
+            frequencyPenalty: Double? = nil,
+            logitBias: [String: Int]? = nil,
+            user: String? = nil
+        ) {
+            self.model = model
+            self.messages = messages
+            self.maxTokens = maxTokens
+            self.temperature = temperature
+            self.topP = topP
+            self.n = n
+            self.stream = stream
+            self.stop = stop
+            self.presencePenalty = presencePenalty
+            self.frequencyPenalty = frequencyPenalty
+            self.logitBias = logitBias
+            self.user = user
+        }
+        
+        enum CodingKeys: String, CodingKey {
+            case model
+            case messages
+            case maxTokens = "max_tokens"
+            case temperature
+            case topP = "top_p"
+            case n
+            case stream
+            case stop
+            case presencePenalty = "presence_penalty"
+            case frequencyPenalty = "frequency_penalty"
+            case logitBias = "logit_bias"
+            case user
+        }
+    }
+    
+    /// Response from the chat completions API
+    public struct CompletionResponse: Decodable {
+        /// The ID of the completion
+        public let id: String
+        
+        /// The object type
+        public let object: String
+        
+        /// The creation timestamp
+        public let created: Int
+        
+        /// The model used
+        public let model: String
+        
+        /// The choices generated
+        public let choices: [Choice]
+        
+        /// The usage statistics
+        public let usage: Usage?
+        
+        /// A choice generated by the model
+        public struct Choice: Decodable {
+            /// The index of the choice
+            public let index: Int
+            
+            /// The message generated
+            public let message: Message
+            
+            /// The reason the generation stopped
+            public let finishReason: String?
+            
+            enum CodingKeys: String, CodingKey {
+                case index
+                case message
+                case finishReason = "finish_reason"
+            }
+        }
+        
+        /// Usage statistics for the request
+        public struct Usage: Decodable {
+            /// The number of prompt tokens used
+            public let promptTokens: Int
+            
+            /// The number of completion tokens used
+            public let completionTokens: Int
+            
+            /// The total number of tokens used
+            public let totalTokens: Int
+            
+            enum CodingKeys: String, CodingKey {
+                case promptTokens = "prompt_tokens"
+                case completionTokens = "completion_tokens"
+                case totalTokens = "total_tokens"
+            }
+        }
+    }
+}
