@@ -45,6 +45,15 @@ public class OpenAIClient {
         self.init(configuration: configuration)
     }
     
+    /// Creates a new OpenAI client using the API key from Secrets.plist
+    /// - Returns: A configured OpenAI client or nil if the Secrets.plist file is not found or invalid
+    public convenience init?() {
+        guard let configuration = OpenAIConfiguration.fromSecretsPlist() else {
+            return nil
+        }
+        self.init(configuration: configuration)
+    }
+    
     /// Sends a request to the OpenAI API
     /// - Parameters:
     ///   - endpoint: The API endpoint path

@@ -42,6 +42,37 @@ Or add it directly in Xcode using File > Add Packages...
 
 ## Usage
 
+### API Key Management with Secrets.plist
+
+This package supports storing API keys in a .plist file that is excluded from version control:
+
+1. Copy the template file `Secrets.plist.example` to `Secrets.plist` in your project's root directory
+2. Add your API key to the Secrets.plist file:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>OPENAI_API_KEY</key>
+	<string>your-api-key-here</string>
+	<key>OPENAI_ORGANIZATION</key>
+	<string>your-organization-id-here</string>
+</dict>
+</plist>
+```
+
+3. Initialize the client without providing the API key:
+
+```swift
+// The client will automatically use the API key from Secrets.plist
+if let client = OpenAIClient() {
+    // Use the client
+} else {
+    // Handle the case where Secrets.plist is not found or invalid
+}
+```
+
 ### Configuration
 
 ```swift

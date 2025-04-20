@@ -1,1 +1,4 @@
 .DS_Store
+
+# Secrets file containing API keys
+Secrets.plist

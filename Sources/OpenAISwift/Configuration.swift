@@ -32,4 +32,28 @@ public struct OpenAIConfiguration {
         self.baseURL = baseURL
         self.timeoutInterval = timeoutInterval
     }
+    
+    /// Creates a new OpenAI configuration from a Secrets.plist file
+    /// - Returns: A configuration with API key and organization from the plist file
+    public static func fromSecretsPlist() -> OpenAIConfiguration? {
+        // Look for Secrets.plist in various locations
+        let possiblePaths = [
+            // Current directory
+            "Secrets.plist",
+            // Bundle resources
+            Bundle.main.path(forResource: "Secrets", ofType: "plist"),
+            // Project directory
+            FileManager.default.currentDirectoryPath + "/Secrets.plist"
+        ].compactMap { $0 }
+        
+        for path in possiblePaths {
+            if let dict = NSDictionary(contentsOfFile: path) as? [String: Any],
+               let apiKey = dict["OPENAI_API_KEY"] as? String {
+                let organization = dict["OPENAI_ORGANIZATION"] as? String
+                return OpenAIConfiguration(apiKey: apiKey, organization: organization)
+            }
+        }
+        
+        return nil
+    }
 }
